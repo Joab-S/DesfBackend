@@ -20,7 +20,7 @@ export class CreateServiceOrderDto {
     @IsString()
     reported_problem: string;
     
-    @IsBoolean()
+    @IsString()
     @IsEnum(enumStatus)
-    status: boolean;
+    status: string;
 }

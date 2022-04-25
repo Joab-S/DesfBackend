@@ -1,9 +1,10 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateServiceOrderDto } from './dto/create-service-order.dto';
 import { UpdateServiceOrderDto } from './dto/update-service-order.dto';
+import { enumStatus } from './entities/roles.enum';
 import { ServiceOrder } from './entities/service-order.entity';
 
 @Injectable()
@@ -36,19 +37,41 @@ export class ServiceOrderService {
     }
   }
 
-  findAll() {
-    return `This action returns all serviceOrder`;
+  findAll(user: User): Promise<ServiceOrder[]> {
+    const service_orders = this.repository.find({where: {user: {id: user.id} }});
+    return service_orders;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} serviceOrder`;
+  findOne(id: string) {
+    const service_order = this.repository.findOne({where: {id: id}});
+    return service_order;
   }
 
-  update(id: number, updateServiceOrderDto: UpdateServiceOrderDto) {
+  update(id: string, updateServiceOrderDto: UpdateServiceOrderDto) {
     return `This action updates a #${id} serviceOrder`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} serviceOrder`;
+  async remove(id: string, user: User) {
+    const service_order = await this.repository.findOne({where: {id: id}});
+    
+    console.log(user)
+    console.log(service_order)
+    
+    if (user != service_order.user) {
+      throw new ForbiddenException (
+        'Você não tem autorização para acessar este recurso.'
+        )
+      } 
+    else{
+      if (service_order.status == enumStatus.CLOSE) {
+        throw new NotFoundException (
+          'Esta Ordem de Serviço está fechada.'
+        );
+      }
+      else {
+        service_order.status = enumStatus.CLOSE;
+        service_order.save();
+      }
+    }
   }
 }

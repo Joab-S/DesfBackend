@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ValidationPipe, ForbiddenException } from '@nestjs/common';
 import { ServiceOrderService } from './service-order.service';
 import { CreateServiceOrderDto } from './dto/create-service-order.dto';
 import { UpdateServiceOrderDto } from './dto/update-service-order.dto';
@@ -16,31 +16,34 @@ export class ServiceOrderController {
     const service_order = await this.serviceOrderService.create(createServiceOrderDto, user);
     return {
       protocol: service_order.id,
-      message: 'Verifique sua caixa de mensagens para validar seu email!'
+      message: 'Verifique sua caixa de mensagens para mais informações!'
     };
   }
 
   @Get()
   @UseGuards(isAuthenticatedJWT)
-  findAll() {
-    return this.serviceOrderService.findAll();
+  findAll(@GetUser() user: User) {
+    return this.serviceOrderService.findAll(user);
   }
 
   @Get(':id')
   @UseGuards(isAuthenticatedJWT)
   findOne(@Param('id') id: string) {
-    return this.serviceOrderService.findOne(+id);
+    return this.serviceOrderService.findOne(id);
   }
 
   @Patch(':id')
   @UseGuards(isAuthenticatedJWT)
   update(@Param('id') id: string, @Body() updateServiceOrderDto: UpdateServiceOrderDto) {
-    return this.serviceOrderService.update(+id, updateServiceOrderDto);
+    return this.serviceOrderService.update(id, updateServiceOrderDto);
   }
 
   @Delete(':id')
   @UseGuards(isAuthenticatedJWT)
-  remove(@Param('id') id: string) {
-    return this.serviceOrderService.remove(+id);
+  remove(@Param('id') id: string, @GetUser() user: User,) {
+    this.serviceOrderService.remove(id, user);
+    return {
+      message: {id: id, message: 'Ordem de Serviço encerrada com sucesso!'}
+    };
   }
 }

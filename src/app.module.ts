@@ -7,8 +7,7 @@ import { ServiceOrderModule } from './service-order/service-order.module';
 import { WinstonModule } from 'nest-winston';
 import { winstonConfig } from './configs/winston.config';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { LoggerInterceptor } from './interceptors/logger.interceptor';
-import { HttpModule } from '@nestjs/axios';
+import { LoggerInterceptor } from './utils/interceptors/logger.interceptor';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { mailerConfig } from './configs/mailer.config';
 
@@ -17,7 +16,7 @@ import { mailerConfig } from './configs/mailer.config';
     TypeOrmModule.forRoot(OrmConfig),
     WinstonModule.forRoot(winstonConfig),
     MailerModule.forRoot(mailerConfig),
-    UsersModule, AuthModule, ServiceOrderModule, HttpModule
+    UsersModule, AuthModule, ServiceOrderModule
   ],
   controllers: [],
   providers: [

@@ -33,7 +33,7 @@ import { ServiceOrder } from 'src/service-order/entities/service-order.entity';
     @Column({ nullable: false })
     salt: string;
   
-    @Column({ nullable: false })
+    @Column({ nullable: true })
     password: string;
   
     @Column({ nullable: true, type: 'varchar', length: 64 })
@@ -57,11 +57,6 @@ import { ServiceOrder } from 'src/service-order/entities/service-order.entity';
   
     @UpdateDateColumn()
     updatedAt: Date;
-
-    async getAddress(zipcode: string): Promise<Address>{
-      const address: Address = null
-      return address;
-    }
 
     async checkPassword(password: string): Promise<boolean> {
       const hash = await bcrypt.hash(password, this.salt);

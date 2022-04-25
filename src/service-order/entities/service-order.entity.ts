@@ -32,12 +32,11 @@ export class ServiceOrder extends BaseEntity {
   reported_problem: string;
 
   @Column({ nullable: false })
-  status: boolean;
+  status: string;
 
   @ManyToOne(() => User, user => user.service_order)
   @JoinColumn({ name: 'user_id' })
   user: User;
-  author: string;
 
   @CreateDateColumn()
   createdAt: Date;

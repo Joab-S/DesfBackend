@@ -19,10 +19,4 @@ export class CreateUserDto {
 
     @IsInt()
     zipcode: string;
-
-    @IsString()
-    password: string;
-
-    @IsString()
-    passwordConfirmation: string;
   }
